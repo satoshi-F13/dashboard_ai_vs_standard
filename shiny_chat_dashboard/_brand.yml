@@ -1,9 +1,7 @@
 meta:
-  name: SATOM OÜ
+  name: SATOM OU
   links:
     home: https://satom.eu/
-
-
 logo:
   images:
     icon-color: logos/icon/satom-icon-color.png
@@ -12,7 +10,6 @@ logo:
   small: icon-color
   medium: wide-color
   large: tall-color
-
 color:
   palette:
     awanokuni: "#E3EBF3"
@@ -35,7 +32,6 @@ color:
   danger: gochiso
   light: awanokuni
   dark: noren
-
 typography:
   fonts:
     - family: "Noto Sans"
@@ -45,28 +41,25 @@ typography:
     - family: "Alata"
       source: google
   base:
-    family: NOTO Sans
+    family: "Noto Sans"
     line-height: 1.6
   headings:
-    family: Alata 
-    weight: 600  # 400 is equivalent to "regular" in most font systems
+    family: "Alata"
+    weight: 600
   link:
     color: primary
     decoration: underline
   monospace:
-    family: IBM Plex Mono
+    family: "IBM Plex Mono"
     size: 1em
-
 defaults:
   bootstrap:
-    defaults: # defaults also supports a string as its value
+    defaults:
       link-decoration: underline
       navbar-fg: "#fff"
   quarto:
     format:
-      # basic format-specific settings
-      html:
-      revealjs:
-      typst:
-  shiny:
-    # shiny specific settings
+      html: {}
+      revealjs: {}
+      typst: {}
+  shiny: {}

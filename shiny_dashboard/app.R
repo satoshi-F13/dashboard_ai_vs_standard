@@ -7,7 +7,6 @@ library(plotly)
 library(dplyr)
 library(ggplot2)
 library(duckdb)
-library(reshape2)
 library(tidyr)
 
 

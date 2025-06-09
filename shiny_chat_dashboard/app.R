@@ -9,7 +9,6 @@ library(dplyr)
 library(ggplot2)
 library(shinychat)
 library(duckdb)
-library(reshape2)
 library(tidyr)
 
 theme = bs_theme(brand_yml = "_brand.yml")

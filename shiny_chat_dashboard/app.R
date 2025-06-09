@@ -18,7 +18,7 @@ theme = bs_theme(brand_yml = "_brand.yml")
 con <- dbConnect(duckdb())
 
 # Load the tips dataset and create DuckDB table
-data(tips, package = "reshape2")
+data(tips, package = "ggplot2")
 
 # Ensure the dataset has the required structure
 if (!all(c("total_bill", "tip", "sex", "smoker", "day", "time", "size") %in% names(tips))) {

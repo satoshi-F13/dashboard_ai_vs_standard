@@ -38,7 +38,8 @@ tips_enhanced <- tips %>%
     )
   )
 
-# Write data to DuckDB
+# Initialize DuckDB connection and load data
+con <- dbConnect(duckdb())
 dbWriteTable(con, "tips", tips_enhanced, overwrite = TRUE)
 
 # Define the system prompt for SQL generation----
@@ -274,6 +275,8 @@ server <- function(input, output, session) {
     query_status = "Ready"
   )
   
+  
+  
   # Handle chat input using shinychat pattern
   observeEvent(input$chat_user_input, {
     user_message <- input$chat_user_input
@@ -295,6 +298,12 @@ server <- function(input, output, session) {
         return()
       }
       
+      # Check if connection exists and is valid, if not recreate it
+      if (!exists("con") || !dbIsValid(con)) {
+        con <<- dbConnect(duckdb())
+        dbWriteTable(con, "tips", tips_enhanced, overwrite = TRUE)
+      }
+      
       # Execute the query
       result <- dbGetQuery(con, sql_query)
       
@@ -312,7 +321,41 @@ server <- function(input, output, session) {
       
     }, error = function(e) {
       values$query_status <- paste("Error:", e$message)
-      chat_append("chat", paste("❌ Error executing query:", e$message))
+      
+      # Try to reconnect if there's a connection error
+      if (grepl("connection|rapi_prepare|Invalid connection", e$message, ignore.case = TRUE)) {
+        tryCatch({
+          # Force close existing connection if it exists
+          if (exists("con")) {
+            try(dbDisconnect(con), silent = TRUE)
+          }
+          
+          # Create new connection
+          con <<- dbConnect(duckdb())
+          dbWriteTable(con, "tips", tips_enhanced, overwrite = TRUE)
+          
+          # Retry the query
+          result <- dbGetQuery(con, sql_query)
+          
+          if (nrow(result) > 0) {
+            values$current_data <- result
+            values$current_sql <- sql_query
+            values$query_status <- paste("Success (after reconnect):", nrow(result), "rows returned")
+            
+            response_message <- paste("✅ Query executed successfully after reconnection! Retrieved", nrow(result), "rows.")
+            chat_append("chat", response_message)
+          } else {
+            values$query_status <- "No results found (after reconnect)"
+            chat_append("chat", "Query executed after reconnection but returned no results.")
+          }
+          
+        }, error = function(reconnect_error) {
+          values$query_status <- paste("Reconnection failed:", reconnect_error$message)
+          chat_append("chat", paste("❌ Failed to reconnect to database:", reconnect_error$message))
+        })
+      } else {
+        chat_append("chat", paste("❌ Error executing query:", e$message))
+      }
     })
   })
   

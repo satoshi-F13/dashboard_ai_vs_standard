@@ -1,22 +1,24 @@
 # Load required libraries
 library(shiny)
-library(bslib)
-library(ellmer)
-library(purrr)
-library(DT)
-library(plotly)
-library(dplyr)
-library(ggplot2)
-library(shinychat)
-library(duckdb)
-library(tidyr)
+library(bslib) # Designing layout of web app
+library(ellmer) # Chat configulation
+library(purrr) #effective formula
+library(DT)  # Data table
+library(plotly) # Intractive visualization
+library(dplyr)  # Data cleaninig
+library(ggplot2) # Static visualization
+library(shinychat) #AI assistant
+library(duckdb)  #SQL package
+library(tidyr)  # for data cleaning
 
 theme = bs_theme(brand_yml = "_brand.yml")
 
 # Initialize DuckDB connection and load data
 con <- dbConnect(duckdb())
 
-source("load_tips.R")
+
+tips <- read.csv(file = "tips.csv")
+
 
 # Ensure the dataset has the required structure
 if (!all(c("total_bill", "tip", "sex", "smoker", "day", "time", "size") %in% names(tips))) {
